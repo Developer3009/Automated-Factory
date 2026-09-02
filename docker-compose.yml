@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: smartplant-postgres
+    environment:
+      POSTGRES_DB: smartplant
+      POSTGRES_USER: smartplant
+      POSTGRES_PASSWORD: smartplant
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: smartplant-ollama
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama_data:/root/.ollama
+
+  server:
+    build:
+      context: ./apps/server
+    container_name: smartplant-server
+    env_file:
+      - .env
+    environment:
+      PORT: 4000
+      DATABASE_URL: postgresql://smartplant:smartplant@postgres:5432/smartplant
+      OLLAMA_BASE_URL: http://ollama:11434
+    depends_on:
+      - postgres
+      - ollama
+    ports:
+      - '4000:4000'
+
+  web:
+    build:
+      context: ./apps/web
+    container_name: smartplant-web
+    depends_on:
+      - server
+    ports:
+      - '80:80'
+
+volumes:
+  postgres_data:
+  ollama_data:

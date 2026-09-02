@@ -1,0 +1,14 @@
+{
+  "name": "smartplant-platform",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"npm --prefix apps/server run dev\" \"npm --prefix apps/web run dev -- --host 0.0.0.0\"",
+    "build": "npm --prefix apps/server run build && npm --prefix apps/web run build",
+    "start": "npm --prefix apps/server run start",
+    "preview": "npm --prefix apps/web run preview -- --host 0.0.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}
